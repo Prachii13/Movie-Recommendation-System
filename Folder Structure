@@ -1,0 +1,7 @@
+movie_recommender/
+├── data/movies.csv              # Input movie dataset (from TMDb)
+├── recommender.py               # Core logic for recommendations
+├── app.py                       # Streamlit UI for interaction
+├── requirements.txt
+├── README.md
+└── .gitignore
