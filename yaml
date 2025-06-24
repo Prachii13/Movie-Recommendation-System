@@ -1,0 +1,40 @@
+
+---
+
+### 📁 `data/movies.csv`
+Use a cleaned dataset with columns like:  
+`title`, `overview`, `genres`, `keywords`, `cast`, `crew`
+
+Want me to provide a sample CSV with 500+ movies?
+
+---
+
+### 🔧 `recommender.py`
+```python
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import pickle
+
+# Load and process data
+def load_data(path="data/movies.csv"):
+    df = pd.read_csv(path)
+    df = df.dropna(subset=["tags"])
+    return df
+
+def build_similarity(df):
+    tfidf = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = tfidf.fit_transform(df["tags"])
+    similarity = cosine_similarity(tfidf_matrix)
+    return similarity
+
+def recommend(movie_title, df, similarity_matrix):
+    movie_title = movie_title.lower()
+    if movie_title not in df["title"].str.lower().values:
+        return ["Movie not found."]
+    
+    idx = df[df["title"].str.lower() == movie_title].index[0]
+    distances = list(enumerate(similarity_matrix[idx]))
+    distances = sorted(distances, key=lambda x: x[1], reverse=True)
+    recommended = [df.iloc[i[0]].title for i in distances[1:6]]
+    return recommended
